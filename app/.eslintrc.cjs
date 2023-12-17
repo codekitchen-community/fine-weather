@@ -5,7 +5,6 @@ module.exports = {
   },
   extends: [
     'plugin:vue/vue3-essential',
-    'airbnb-base',
   ],
   parserOptions: {
     ecmaVersion: 'latest',
@@ -13,14 +12,6 @@ module.exports = {
   },
   plugins: [
     'vue',
-  ],
-  overrides: [
-    {
-      files: ['main.js'],
-      rules: {
-        'import/no-unresolved': 'off',
-      },
-    },
   ],
   rules: {
   },
@@ -33,4 +24,4 @@ module.exports = {
       },
     },
   },
-};
+}

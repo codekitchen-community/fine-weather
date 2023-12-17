@@ -22,7 +22,6 @@
     "@unocss/transformer-directives": "^0.53.1",
     "@vitejs/plugin-vue": "^4.0.0",
     "eslint": "^7.32.0 || ^8.2.0",
-    "eslint-config-airbnb-base": "^15.0.0",
     "eslint-import-resolver-alias": "^1.1.2",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-vue": "^9.8.0",

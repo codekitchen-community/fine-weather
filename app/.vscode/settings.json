@@ -6,6 +6,6 @@
   "[vue]": {
     "editor.defaultFormatter": "Vue.volar",
   },
-  "javascript.format.semicolons": "insert",
+  "javascript.format.semicolons": "remove",
   "html.format.wrapLineLength": 98,
 }
