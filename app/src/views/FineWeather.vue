@@ -115,27 +115,27 @@
 <script setup>
 import {
   onMounted, reactive, ref, watchEffect,
-} from 'vue';
-import { useDark, useEventListener } from '@vueuse/core';
-import AV from 'leancloud-storage';
-import FingerprintJS from '@fingerprintjs/fingerprintjs';
-import { EmojiReaction } from 'emoji-reaction';
-import ImageCard from './ImageCard.vue';
-import ImageDetail from './ImageDetail.vue';
+} from 'vue'
+import { useDark, useEventListener } from '@vueuse/core'
+import AV from 'leancloud-storage'
+import FingerprintJS from '@fingerprintjs/fingerprintjs'
+import { EmojiReaction } from 'emoji-reaction'
+import ImageCard from './ImageCard.vue'
+import ImageDetail from './ImageDetail.vue'
 
-const PAGE_SIZE = 20;
-const AV_OBJECT_NAME = 'FineWeatherGalleryReaction';
+const PAGE_SIZE = 20
+const AV_OBJECT_NAME = 'FineWeatherGalleryReaction'
 
-const isDark = useDark();
-const images = ref([]);
-const imagesInfoMap = ref(null);
-const imageDetailModel = ref(false);
-const loadingImages = ref(false);
-const folded = ref(false);
-const hasMore = ref(true);
-const currentPage = ref(0);
-const reactor = ref('');
-const avReady = ref(false);
+const isDark = useDark()
+const images = ref([])
+const imagesInfoMap = ref(null)
+const imageDetailModel = ref(false)
+const loadingImages = ref(false)
+const folded = ref(false)
+const hasMore = ref(true)
+const currentPage = ref(0)
+const reactor = ref('')
+const avReady = ref(false)
 const imageDetails = reactive({
   imgMeta: {
     title: '',
@@ -150,74 +150,74 @@ const imageDetails = reactive({
   },
   current: -1,
   total: 0,
-});
+})
 
 const fpPromise = FingerprintJS.load();
 (async () => {
-  const fp = await fpPromise;
-  const result = await fp.get();
-  reactor.value = result.visitorId;
-})();
+  const fp = await fpPromise
+  const result = await fp.get()
+  reactor.value = result.visitorId
+})()
 
 async function react(reaction) {
-  const reactionObj = new AV.Object(AV_OBJECT_NAME);
-  reactionObj.set('reaction', reaction);
-  reactionObj.set('reactor', reactor.value);
-  return reactionObj.save();
+  const reactionObj = new AV.Object(AV_OBJECT_NAME)
+  reactionObj.set('reaction', reaction)
+  reactionObj.set('reactor', reactor.value)
+  return reactionObj.save()
 }
 
 async function unreact(reaction) {
-  const query = new AV.Query(AV_OBJECT_NAME);
-  return query.equalTo('reaction', reaction).equalTo('reactor', reactor.value).destroyAll();
+  const query = new AV.Query(AV_OBJECT_NAME)
+  return query.equalTo('reaction', reaction).equalTo('reactor', reactor.value).destroyAll()
 }
 
 async function getReactions() {
   try {
-    const query = new AV.Query(AV_OBJECT_NAME);
+    const query = new AV.Query(AV_OBJECT_NAME)
     return query.find().then((records) => records.reduce((pre, curr) => {
-      const { reaction, reactor: _reactor } = curr.toJSON();
-      const existedReaction = pre.find((p) => p.reaction === reaction);
+      const { reaction, reactor: _reactor } = curr.toJSON()
+      const existedReaction = pre.find((p) => p.reaction === reaction)
       if (existedReaction) {
         if (!existedReaction.reactors.includes(_reactor)) {
-          existedReaction.reactors.push(_reactor);
+          existedReaction.reactors.push(_reactor)
         }
       } else {
         pre.push({
           reaction,
           reactors: [_reactor],
-        });
+        })
       }
-      return pre;
-    }, []));
+      return pre
+    }, []))
   } catch (err) {
     // mostly, 404 error occurs
     // eslint-disable-next-line no-console
-    console.error(err);
-    return new Promise((resolve) => { resolve([]); });
+    console.error(err)
+    return new Promise((resolve) => { resolve([]) })
   }
 }
 
 function jumpTo(url) {
-  const a = document.createElement('a');
-  a.href = url;
-  a.target = '_blank';
-  a.click();
+  const a = document.createElement('a')
+  a.href = url
+  a.target = '_blank'
+  a.click()
 }
 
 function openDetail(index) {
-  imageDetails.current = index;
-  imageDetails.imgMeta = images.value[index];
-  imageDetailModel.value = true;
+  imageDetails.current = index
+  imageDetails.imgMeta = images.value[index]
+  imageDetailModel.value = true
 }
 
 function keypressListener(ev) {
   if (imageDetailModel.value) {
     if (ev.key === 'Escape') {
-      imageDetailModel.value = false;
+      imageDetailModel.value = false
     } else if (ev.key === 'ArrowLeft' && imageDetails.current > 0) {
-      openDetail(imageDetails.current - 1);
+      openDetail(imageDetails.current - 1)
     } else if (ev.key === 'ArrowRight' && imageDetails.current < imageDetails.total - 1) {
-      openDetail(imageDetails.current + 1);
+      openDetail(imageDetails.current + 1)
     }
   }
 }
@@ -228,26 +228,26 @@ async function init() {
     appId: import.meta.env.VITE_LC_APP_ID,
     appKey: import.meta.env.VITE_LC_APP_KEY,
     serverURL: import.meta.env.VITE_LC_SERVER_URL,
-  });
+  })
 
   // info map
   imagesInfoMap.value = await (await fetch(`${import.meta.env.VITE_IMG_FETCH_PREFIX + import.meta.env.VITE_IMG_NAME_PREFIX}images.json`, {
     method: 'GET',
     mode: 'cors',
-  })).json();
+  })).json()
 }
 
 async function loadImages(page = 0) {
-  loadingImages.value = true;
-  const query = new AV.Query('Image');
-  query.limit(PAGE_SIZE).skip(page * PAGE_SIZE);
+  loadingImages.value = true
+  const query = new AV.Query('Image')
+  query.limit(PAGE_SIZE).skip(page * PAGE_SIZE)
 
-  const response = (await query.find());
+  const response = (await query.find())
   const appendImages = response.filter(
     (r) => images.value.every((i) => i.src !== r.attributes.name),
   ).map((r) => {
-    const { attributes } = r;
-    const info = imagesInfoMap.value[import.meta.env.VITE_IMG_NAME_PREFIX + attributes.name];
+    const { attributes } = r
+    const info = imagesInfoMap.value[import.meta.env.VITE_IMG_NAME_PREFIX + attributes.name]
 
     return {
       ...attributes,
@@ -256,38 +256,38 @@ async function loadImages(page = 0) {
         size: info.size,
         encoded: info.hash,
       },
-    };
-  });
+    }
+  })
 
-  images.value.push(...appendImages);
-  imageDetails.total = images.value.length;
-  loadingImages.value = false;
+  images.value.push(...appendImages)
+  imageDetails.total = images.value.length
+  loadingImages.value = false
 
-  return appendImages.length === PAGE_SIZE;
+  return appendImages.length === PAGE_SIZE
 }
 
 onMounted(async () => {
-  await init();
+  await init()
 
   // register keypress event
-  useEventListener(document, 'keydown', keypressListener);
+  useEventListener(document, 'keydown', keypressListener)
 
-  avReady.value = true;
-});
+  avReady.value = true
+})
 
 watchEffect(async () => {
   if (imagesInfoMap.value && hasMore.value) {
-    hasMore.value = await loadImages(currentPage.value);
+    hasMore.value = await loadImages(currentPage.value)
   }
-});
+})
 
 watchEffect(() => {
   if (imageDetailModel.value) {
-    document.body.style.overflow = 'hidden';
+    document.body.style.overflow = 'hidden'
   } else {
-    document.body.style.overflow = 'auto';
+    document.body.style.overflow = 'auto'
   }
-});
+})
 </script>
 
 <style scoped>

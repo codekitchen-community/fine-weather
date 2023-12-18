@@ -63,12 +63,12 @@
 </template>
 
 <script setup>
-import { decode } from 'blurhash';
+import { decode } from 'blurhash'
 import {
   computed, ref, watchEffect,
-} from 'vue';
-import { useWindowSize } from '@vueuse/core';
-import ImageAsync from './ImageAsync.vue';
+} from 'vue'
+import { useWindowSize } from '@vueuse/core'
+import ImageAsync from './ImageAsync.vue'
 
 const props = defineProps({
   imgMeta: {
@@ -85,41 +85,41 @@ const props = defineProps({
   current: Number,
   total: Number,
   modelValue: Boolean,
-});
-const emits = defineEmits(['lastImage', 'nextImage', 'update:modelValue']);
-const metaEnterActiveClass = ref('');
-const metaLeaveActiveClass = ref('');
-const skeletonRef = ref(null);
+})
+const emits = defineEmits(['lastImage', 'nextImage', 'update:modelValue'])
+const metaEnterActiveClass = ref('')
+const metaLeaveActiveClass = ref('')
+const skeletonRef = ref(null)
 
-const { width: windowWidth } = useWindowSize();
+const { width: windowWidth } = useWindowSize()
 const imgSrc = computed(
   () => `${import.meta.env.VITE_IMG_FETCH_PREFIX + import.meta.env.VITE_IMG_NAME_PREFIX}${props.imgMeta.src}`,
-);
+)
 
 watchEffect(() => {
   if (props.modelValue && skeletonRef.value) {
-    const originSize = props.imgMeta.blurHash.size;
-    skeletonRef.value.height = Math.floor((originSize[1] / originSize[0]) * 32);
+    const originSize = props.imgMeta.blurHash.size
+    skeletonRef.value.height = Math.floor((originSize[1] / originSize[0]) * 32)
 
-    const pixels = decode(props.imgMeta.blurHash.encoded, 32, 32);
-    const ctx = skeletonRef.value.getContext('2d');
-    const imageData = ctx.createImageData(32, 32);
-    imageData.data.set(pixels);
-    ctx.putImageData(imageData, 0, 0);
+    const pixels = decode(props.imgMeta.blurHash.encoded, 32, 32)
+    const ctx = skeletonRef.value.getContext('2d')
+    const imageData = ctx.createImageData(32, 32)
+    imageData.data.set(pixels)
+    ctx.putImageData(imageData, 0, 0)
   }
-});
+})
 
 watchEffect(() => {
   if (windowWidth.value > 1024) {
-    metaEnterActiveClass.value = 'animate__animated animate__slideInRight';
-    metaLeaveActiveClass.value = 'animate__animated animate__slideOutRight';
+    metaEnterActiveClass.value = 'animate__animated animate__slideInRight'
+    metaLeaveActiveClass.value = 'animate__animated animate__slideOutRight'
   } else {
-    metaEnterActiveClass.value = 'animate__animated animate__slideInUp';
-    metaLeaveActiveClass.value = 'animate__animated animate__slideOutDown';
+    metaEnterActiveClass.value = 'animate__animated animate__slideInUp'
+    metaLeaveActiveClass.value = 'animate__animated animate__slideOutDown'
   }
-});
+})
 
-const folded = ref(false);
+const folded = ref(false)
 </script>
 
 <style scoped>

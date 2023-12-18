@@ -36,9 +36,9 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from 'vue';
-import { decode } from 'blurhash';
-import ImageAsync from './ImageAsync.vue';
+import { computed, onMounted, ref } from 'vue'
+import { decode } from 'blurhash'
+import ImageAsync from './ImageAsync.vue'
 
 const props = defineProps({
   src: String,
@@ -53,29 +53,29 @@ const props = defineProps({
     encoded: String,
     size: Array,
   },
-});
-const skeletonRef = ref(null);
-const containerRef = ref();
+})
+const skeletonRef = ref(null)
+const containerRef = ref()
 
 const imgSrc = computed(
   () => `${import.meta.env.VITE_IMG_FETCH_PREFIX + import.meta.env.VITE_IMG_NAME_PREFIX}thumbnail/${props.src}`,
-);
+)
 const minImageHeight = computed(
   () => Math.floor(
     (containerRef.value?.offsetWidth || 0) * (props.blurHash.size[1] / props.blurHash.size[0]),
   ),
-);
+)
 
 onMounted(() => {
-  const originSize = props.blurHash.size;
-  skeletonRef.value.height = Math.floor((originSize[1] / originSize[0]) * 32);
+  const originSize = props.blurHash.size
+  skeletonRef.value.height = Math.floor((originSize[1] / originSize[0]) * 32)
 
-  const pixels = decode(props.blurHash.encoded, 32, 32);
-  const ctx = skeletonRef.value.getContext('2d');
-  const imageData = ctx.createImageData(32, 32);
-  imageData.data.set(pixels);
-  ctx.putImageData(imageData, 0, 0);
-});
+  const pixels = decode(props.blurHash.encoded, 32, 32)
+  const ctx = skeletonRef.value.getContext('2d')
+  const imageData = ctx.createImageData(32, 32)
+  imageData.data.set(pixels)
+  ctx.putImageData(imageData, 0, 0)
+})
 </script>
 
 <style scoped>
