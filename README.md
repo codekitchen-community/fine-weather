@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="public/fine-weather-gallery.ico" />
+    <img src="app/public/fine-weather-gallery.ico" />
     <br />
     <h1 align="center">Fine Weather</h1>
 </p>
