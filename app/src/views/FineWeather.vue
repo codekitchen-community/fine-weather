@@ -120,8 +120,8 @@ import { useDark, useEventListener } from '@vueuse/core'
 import AV from 'leancloud-storage'
 import FingerprintJS from '@fingerprintjs/fingerprintjs'
 import { EmojiReaction } from 'emoji-reaction'
-import ImageCard from './ImageCard.vue'
-import ImageDetail from './ImageDetail.vue'
+import ImageCard from '../components/ImageCard.vue'
+import ImageDetail from '../components/ImageDetail.vue'
 
 const PAGE_SIZE = 20
 const AV_OBJECT_NAME = 'FineWeatherGalleryReaction'
