@@ -81,7 +81,7 @@ celerybeat-schedule
 *.sage.py
 
 # dotenv
-.flaskenv
+.env
 
 # virtualenv
 .venv
@@ -112,4 +112,4 @@ ENV/
 
 db.sqlite
 static/
-!static/favicon.ico
+!static/favicon.svg

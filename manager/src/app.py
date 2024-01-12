@@ -22,7 +22,6 @@ app = Flask(__name__, instance_path=Path("./instance").absolute())
 app.config.from_prefixed_env()
 
 bootstrap = Bootstrap5(app)
-csrf = CSRFProtect(app)
 commands.init_app(app)
 db.init_app(app)
 auth = HTTPBasicAuth()
@@ -98,6 +97,7 @@ def get_images():
 
 
 @app.post("/images")
+@auth.login_required
 def add_image():
     """Add one image."""
     img_folder = Path(app.static_folder) / IMG_FOLDER
@@ -147,7 +147,7 @@ def add_image():
         db.session.add(img)
         db.session.commit()
         logger.info("Done.")
-        return _make_resp()
+        return _make_resp(img.id)
     except Exception as e:
         err_msg = "An error occurred"
         logger.error(f"{err_msg} during image adding:\n{e!r}")
@@ -158,13 +158,14 @@ def add_image():
 
 
 @app.put("/images/<image_id>")
+@auth.login_required
 def update_image(image_id):
     """Update info of one certain image."""
     try:
         form_data = request.form
 
         # check existence
-        img = Image.query.get(image_id)
+        img = db.session.get(Image, image_id)
         if not img:
             return _make_resp(err_code="INVALID_IMAGE", msg="Target image does not exist.")
 
@@ -187,10 +188,11 @@ def update_image(image_id):
 
 
 @app.delete("/images/<image_id>")
+@auth.login_required
 def delete_image(image_id):
     """Delete one certain image."""
     try:
-        img = Image.query.get(image_id)
+        img = db.session.get(Image, image_id)
         if not img:
             return _make_resp(err_code="INVALID_IMAGE", msg="Target image does not exist.")
 
@@ -200,9 +202,9 @@ def delete_image(image_id):
         logger.info("Done.")
 
         logger.info("Deleting file...")
-        static_folder = Path(app.static_folder)
-        (static_folder / img.uri).unlink(missing_ok=True)
-        (static_folder / img.thumbnail_uri).unlink(missing_ok=True)
+        root_folder = Path(app.root_path)
+        (root_folder / img.uri).unlink(missing_ok=True)
+        (root_folder / img.thumbnail_uri).unlink(missing_ok=True)
         logger.info("Done.")
         return _make_resp(), 204
     except Exception as e:

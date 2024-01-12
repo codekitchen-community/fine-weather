@@ -26,5 +26,12 @@ package-type = "application"
 
 [tool.pdm.scripts]
 serve = { cmd = "flask run", help = "Run the development server" }
+test = { cmd = "pytest", help = "Run all test cases" }
 create-tables = { cmd = "flask create-tables", help = "Create tables" }
 drop-tables = { cmd = "flask drop-tables", help = "Drop tables" }
+
+[tool.pdm.dev-dependencies]
+test = [
+    "pytest>=7.4.4",
+    "pytest-cov>=4.1.0",
+]
