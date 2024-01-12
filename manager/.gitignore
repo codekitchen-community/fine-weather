@@ -72,6 +72,7 @@ target/
 
 # pyenv
 .python-version
+.pdm-python
 
 # celery beat schedule file
 celerybeat-schedule
@@ -80,7 +81,7 @@ celerybeat-schedule
 *.sage.py
 
 # dotenv
-.env
+.flaskenv
 
 # virtualenv
 .venv
@@ -108,3 +109,7 @@ ENV/
 
 # Other
 .DS_Store
+
+db.sqlite
+static/
+!static/favicon.ico

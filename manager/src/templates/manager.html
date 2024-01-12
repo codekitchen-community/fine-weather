@@ -1,0 +1,379 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    {% block head %}
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    {% block styles %}
+    <!-- Bootstrap CSS -->
+    {{ bootstrap.load_css() }}
+    <style>
+        html {
+            height: 100%;
+        }
+
+        body {
+            min-height: 100%;
+        }
+
+        .img-thumbnail {
+            height: 50px;
+        }
+
+        .toast-header .badge {
+            width: 16px;
+            height: 16px;
+        }
+    </style>
+    {% endblock %}
+
+    <title>Images</title>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    {% endblock %}
+
+
+</head>
+
+<body class="bg-light d-flex flex-column">
+    {% from 'bootstrap5/utils.html' import render_icon %}
+    {% from 'bootstrap5/form.html' import render_form %}
+    {% from 'bootstrap5/pagination.html' import render_pagination %}
+
+    {% block content %}
+    <div class="container-lg d-flex flex-column flex-grow-1 h-100">
+        <div class="fs-1">Fine Weather Manager</div>
+        <div class="d-flex align-items-center justify-content-space-between mt-3 mb-4">
+            <div class="flex-grow-1">
+                <button type="button" class="btn btn-primary" onclick="addImageModal.show()">
+                    Add Image
+                </button>
+            </div>
+            <div>
+                <div class="input-group flex-grow-0">
+                    <input type="text" class="form-control" placeholder="Filter by keyword..." id="keyword-input" onkeyup="event.key==='Enter' && filterByKeyword()">
+                    <button class="btn btn-primary" type="button" onclick="filterByKeyword()">
+                        {{ render_icon("search") }}
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="px-2 py-1 bg-white rounded overflow-auto">
+            <table class="table table-hover">
+                <thead class="border-bottom border-secondary">
+                    <tr>
+                        <th>#</th>
+                        <th>Image</th>
+                        <th>Title</th>
+                        <th>Desc</th>
+                        <th>Position</th>
+                        <th>Time</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for image in pagination.items %}
+                    <tr class="align-middle">
+                        <td>{{ loop.index }}</td>
+                        <td>
+                            <img src="{{ '/'+image['thumbnail_uri'] }}" class="img-thumbnail d-block">
+                        </td>
+                        <td>{{ image['title'] }}</td>
+                        <td>{{ image['description'] }}</td>
+                        <td>{{ image['position'] }}</td>
+                        <td>{{ image['time'] }}</td>
+                        <td>
+                            <button type="button" class="btn btn-sm text-primary" onclick="toEditImage({{ image.as_json() }})">
+                                {{ render_icon("pencil-square") }}
+                            </button>
+                            <button type="button" class="btn btn-sm text-danger" onclick="toDeleteImage({{ image.as_json() }})">
+                                {{ render_icon("trash") }}
+                            </button>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="7" class="text-secondary fs-6 text-center" style="pointer-events: none; --bs-text-opacity: .7;">
+                            No Data
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <nav>
+                {{ render_pagination(pagination) }}
+            </nav>
+        </div>
+    </div>
+
+    <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-2 flex-grow-0">
+        <div class="m-auto">
+            <p class="text-muted">
+                &copy; {{ year }} CodeKitchen Community
+            </p>
+        </div>
+    </footer>
+
+    <!-- Modals -->
+    <div class="modal fade" id="addImageModal">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5">Upload Image</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    {{ render_form(add_form, extra_classes="row g-3", form_group_classes="col-12 col-lg-6") }}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="addImage()">Okay</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="editImageModal">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5">Edit Image</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-7">
+                            <div class="card mb-2">
+                                <img src="" class="card-img-top" alt="the editing image">
+                                <div class="card-body">
+                                    <ul class="list-group list-group-flush"></ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-5">
+                            {{ render_form(edit_form, extra_classes="row g-3", form_group_classes="col-12") }}
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="editImage()">Okay</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="deleteImageModal">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5">Delete Confirm</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    {{ edit_form.csrf_token() }}
+                    Sure to delete image "<strong id="img-name"></strong>"?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" onclick="deleteImage()">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toasts -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="1500">
+            <div class="toast-header">
+                <span class="badge d-inline-block"></span>
+                <strong class="me-auto"></strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+            </div>
+        </div>
+    </div>
+    {% endblock %}
+
+    {% block scripts %}
+    <!-- Optional JavaScript -->
+    {{ bootstrap.load_js() }}
+    {% endblock %}
+    <script>
+        const NETWORK_ERR_MSG = "Network error occurred.";
+        let addImageModal;
+        let editImageModal;
+        let editingImage;
+        let deleteImageModal;
+        let deletingImage;
+        let globalToast;
+
+        function notify(type = "info", message = "") {
+            const toast = document.querySelector("#toast");
+            const headerMark = toast.querySelector(".toast-header .badge");
+            const toastBody = toast.querySelector(".toast-body");
+            const markColors = ["danger", "warning", "info", "success"];
+
+            markColors.forEach(c => headerMark.classList.remove(`bg-${c}`));
+            headerMark.classList.add(`bg-${type}`);
+
+            toastBody.innerText = message;
+            globalToast.show();
+        }
+
+        async function addImage() {
+            const modal = addImageModal._element;
+            const form = modal.querySelector("form");
+            const formData = new FormData(form);
+
+            const respRaw = await fetch("/images", {
+                method: "POST",
+                body: formData,
+            });
+
+            if (respRaw.status === 200) {
+                const resp = await respRaw.json();
+                if (!resp.err_code) {
+                    addImageModal.hide();
+                    notify("success", "Image added.");
+                    setTimeout(() => location.reload(), 1500);
+                } else {
+                    notify("warning", resp.msg || resp.err_code);
+                }
+            } else {
+                notify("danger", NETWORK_ERR_MSG);
+            }
+        }
+
+        async function editImage() {
+            const modal = editImageModal._element;
+            const form = modal.querySelector("form");
+            const formData = new FormData(form);
+
+            const respRaw = await fetch(`/images/${editingImage}`, {
+                method: "PUT",
+                body: formData,
+            });
+
+            if (respRaw.status === 200) {
+                const resp = await respRaw.json();
+                if (!resp.err_code) {
+                    editImageModal.hide();
+                    notify("success", "Image updated.");
+                    setTimeout(() => location.reload(), 1500);
+                } else {
+                    notify("warning", resp.msg || resp.err_code);
+                }
+            } else {
+                notify("warning", NETWORK_ERR_MSG);
+            }
+        }
+
+        async function deleteImage() {
+            const modal = deleteImageModal._element;
+
+            const formData = new FormData();
+            const csrfTokenElem = modal.querySelector("#csrf_token");
+            formData.set("csrf_token", csrfTokenElem.value);
+            const respRaw = await fetch(`/images/${deletingImage}`, {
+                method: "DELETE",
+                body: formData,
+            });
+
+            if (respRaw.status === 204) {
+                deleteImageModal.hide();
+                notify("success", "Image deleted.");
+                setTimeout(() => location.reload(), 1500);
+            } else {
+                notify("danger", NETWORK_ERR_MSG);
+            }
+        }
+
+        function filterByKeyword() {
+            const keywordInputElem = document.querySelector("#keyword-input");
+            const keyword = keywordInputElem.value;
+
+            const currentHref = location.href;
+            if (currentHref.includes("?")) {
+                const [path, params] = currentHref.split('?');
+                if (!params) {
+                    location.href = currentHref + `keyword=${keyword}`;
+                } else {
+                    const searchParams = new URLSearchParams(params);
+                    searchParams.set("keyword", keyword);
+                    location.href = `${path}?${searchParams.toString()}`;
+                }
+            } else {
+                location.href = currentHref + `?keyword=${keyword}`;
+            }
+        }
+
+        function toEditImage(image) {
+            const modalElem = editImageModal._element;
+
+            // editable
+            const form = modalElem.querySelector("form");
+            Object.entries(image).forEach(([key, value]) => {
+                const elem = form.querySelector(`#${key}`);
+                if (elem) {
+                    elem.value = value;
+                }
+            });
+
+            // readonly
+            const card = modalElem.querySelector(".card");
+            const imgElem = card.querySelector("img");
+            if (imgElem) {
+                imgElem.src = "/" + image.uri;
+            }
+            const infoAttrs = ['width', 'height', 'blurhash', 'created_at', 'updated_at'];
+            const listElem = card.querySelector(".list-group");
+            if (listElem) {
+                listElem.innerHTML = "";
+                infoAttrs.forEach(ia => {
+                    const li = document.createElement("li");
+                    li.classList.add("list-group-item");
+                    li.innerHTML = `<small>${ia}: ${image[ia]}</small>`;
+                    listElem.appendChild(li);
+                });
+            }
+
+            editingImage = image.id;
+            editImageModal.show();
+        }
+
+        function toDeleteImage(image) {
+            const modalElem = deleteImageModal._element;
+
+            // editable
+            const imageNameElem = modalElem.querySelector("#img-name");
+            imageNameElem.innerText = image.title;
+
+            deletingImage = image.id;
+            deleteImageModal.show();
+        }
+
+        (() => {
+            addImageModal = new bootstrap.Modal("#addImageModal");
+            editImageModal = new bootstrap.Modal("#editImageModal");
+            deleteImageModal = new bootstrap.Modal("#deleteImageModal");
+            globalToast = new bootstrap.Toast("#toast");
+
+            // populate filtering input
+            const [path, params] = location.href.split('?');
+            if (params) {
+                const keyword = new URLSearchParams(params).get("keyword");
+                const keywordInputElem = document.querySelector("#keyword-input");
+                if (keyword && keywordInputElem) {
+                    keywordInputElem.value = keyword;
+                    keywordInputElem.focus();
+                }
+            }
+        })();
+    </script>
+</body>
+
+</html>
