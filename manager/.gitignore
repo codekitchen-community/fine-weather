@@ -110,6 +110,5 @@ ENV/
 # Other
 .DS_Store
 
-db.sqlite
-static/
-!static/favicon.svg
+src/static/*
+!src/static/favicon.svg

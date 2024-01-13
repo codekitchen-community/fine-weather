@@ -8,7 +8,6 @@ import blurhash
 from flask_bootstrap import Bootstrap5
 from flask import Flask, render_template, request, redirect, url_for, g
 from flask_httpauth import HTTPBasicAuth
-from flask_wtf import CSRFProtect
 from loguru import logger
 from PIL import Image as PImage
 from sqlalchemy import or_
@@ -28,7 +27,7 @@ auth = HTTPBasicAuth()
 
 IMG_FOLDER = os.environ.get("IMG_FOLDER_NAME", "img")
 THUMBNAIL_FOLDER = os.environ.get("THUMBNAIL_FOLDER_NAME", "thumbnail")
-THUMBNAIL_MAX_WIDTH = os.environ.get("THUMBNAIL_MAX_WIDTH", 600)
+THUMBNAIL_MAX_WIDTH = int(os.environ.get("THUMBNAIL_MAX_WIDTH", 600))
 
 
 def _make_resp(result=None, err_code="", msg="Success"):
