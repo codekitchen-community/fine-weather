@@ -228,7 +228,7 @@
             const form = modal.querySelector("form");
             const formData = new FormData(form);
 
-            const respRaw = await fetch("/images", {
+            const respRaw = await fetch("/manager/images", {
                 method: "POST",
                 body: formData,
             });
@@ -252,7 +252,7 @@
             const form = modal.querySelector("form");
             const formData = new FormData(form);
 
-            const respRaw = await fetch(`/images/${editingImage}`, {
+            const respRaw = await fetch(`/manager/images/${editingImage}`, {
                 method: "PUT",
                 body: formData,
             });
@@ -276,7 +276,7 @@
 
             const formData = new FormData();
             formData.set("csrf_token", '{{ csrf_token() }}');
-            const respRaw = await fetch(`/images/${deletingImage}`, {
+            const respRaw = await fetch(`/manager/images/${deletingImage}`, {
                 method: "DELETE",
                 body: formData,
             });

@@ -110,5 +110,5 @@ ENV/
 # Other
 .DS_Store
 
-src/static/*
-!src/static/favicon.svg
+fw_manager/static/*
+!fw_manager/static/favicon.svg
