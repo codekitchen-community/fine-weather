@@ -1,0 +1,21 @@
+services:
+  manager:
+    build: ./manager
+    working_dir: /manager
+    environment:
+      FLASK_SQLALCHEMY_DATABASE_URI: sqlite:///data.db
+      FLASK_SECRET_KEY: b3c8540e418c42418350264e30700036
+      IMG_FOLDER_NAME: img
+      THUMBNAIL_FOLDER: thumbnail
+      THUMBNAIL_MAX_WIDTH: 600
+    command: /bin/sh -c "pdm create-tables --username admin --passowrd 123456 && gunicorn -w 4 src.app:app -b 0.0.0.0:5000"
+    volumes:
+      - ./manager_data/img:/manager/static/img
+      - ./manager_data/instance:/manager/instance
+
+  app:
+    build: ./app
+    ports:
+      - 80:80
+    depends_on:
+      - manager
