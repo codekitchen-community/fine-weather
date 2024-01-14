@@ -12,6 +12,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - name: Move manager out
+        run: mv ./manager/* ./
       - name: Setup PDM
         uses: pdm-project/setup-pdm@v3
         with:
@@ -20,4 +22,4 @@ jobs:
       - name: Install dependencies
         run: pdm install -Gtest
       - name: Run tests
-        run: pdm run pytest
+        run: pdm test
