@@ -1,10 +1,11 @@
 {
-  "name": "fine-weather-gallery",
+  "name": "fine-weather",
   "type": "module",
   "version": "1.0.3",
   "private": true,
   "scripts": {
     "dev": "vite",
+    "lint": "eslint --ext .js,.vue src",
     "build": "vite build",
     "preview": "vite preview"
   },
