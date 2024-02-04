@@ -6,7 +6,7 @@ from ..models import Image
 retriever_bp = Blueprint("retriever", __name__)
 
 
-@retriever_bp.get("/")
+@retriever_bp.get("")
 def get_images():
     """Fetch images in JSON."""
     page = request.args.get("page", 1, type=int)

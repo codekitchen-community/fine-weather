@@ -21,9 +21,10 @@ def get_global():
     return lambda key: global_data.get(key)
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture(autouse=True, scope="session")
 def app():
-    from fw_manager import create_app, db
+    from fw_manager import create_app
+    from fw_manager.models import db
     os.environ.update(
         {
             "FLASK_SQLALCHEMY_DATABASE_URI": "sqlite:///:memory:",
@@ -37,6 +38,7 @@ def app():
     with app.app_context():
         db.create_all()
         yield app
+        db.drop_all()
 
 
 @pytest.fixture()

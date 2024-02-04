@@ -88,8 +88,8 @@ def add_image():
         form_data = request.form
 
         # check repetition
-        img_repeat = Image.query.filter_by(title=form_data["title"]).count()
-        if img_repeat:
+        img_exist = db.session.scalar(db.select(Image).filter_by(title=form_data["title"]))
+        if img_exist:
             return make_resp(
                 err_code="REPEAT_TITLE", msg="Image with same title exists."
             )
@@ -127,6 +127,7 @@ def add_image():
         )
         db.session.add(img)
         db.session.commit()
+
         logger.info("Done.")
         return make_resp(img.id), 201
     except Exception as e:
@@ -153,10 +154,9 @@ def update_image(image_id):
             )
 
         # check repetition
-        img_repeat = (
-            Image.query.filter_by(title=form_data["title"])
+        img_repeat = db.session.scalar(
+            db.select(Image).filter_by(title=form_data["title"])
             .filter(Image.id.isnot(image_id))
-            .count()
         )
         if img_repeat:
             return make_resp(

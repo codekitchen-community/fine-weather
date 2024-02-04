@@ -6,4 +6,4 @@ from fw_manager.blueprints.retriever import retriever_bp
 
 def init_app(app: Flask):
     app.register_blueprint(manager_bp, url_prefix='/manager')
-    app.register_blueprint(retriever_bp, uurl_prefix="/images")
+    app.register_blueprint(retriever_bp, url_prefix="/images")
