@@ -175,4 +175,4 @@ def delete_image(image_id):
     (root_folder / img.uri).unlink(missing_ok=True)
     (root_folder / img.thumbnail_uri).unlink(missing_ok=True)
     logger.info("Done.")
-    return None, 204
+    return "", 204
