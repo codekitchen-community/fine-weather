@@ -88,7 +88,9 @@ def add_image():
         form_data = request.form
 
         # check repetition
-        img_exist = db.session.scalar(db.select(Image).filter_by(title=form_data["title"]))
+        img_exist = db.session.scalar(
+            db.select(Image).filter_by(title=form_data["title"])
+        )
         if img_exist:
             return make_resp(
                 err_code="REPEAT_TITLE", msg="Image with same title exists."
@@ -155,7 +157,8 @@ def update_image(image_id):
 
         # check repetition
         img_repeat = db.session.scalar(
-            db.select(Image).filter_by(title=form_data["title"])
+            db.select(Image)
+            .filter_by(title=form_data["title"])
             .filter(Image.id.isnot(image_id))
         )
         if img_repeat:

@@ -1,28 +1,41 @@
 import json
 from datetime import datetime, date
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
 
 import sqlalchemy.orm as so
 from sqlalchemy import func
 from flask_sqlalchemy import SQLAlchemy
+from flask_sqlalchemy.model import Model
+
 db = SQLAlchemy()
+
+if TYPE_CHECKING:
+
+    class BaseModel(Model, so.DeclarativeBase):
+        """A dummy BaseModel class for type checking"""
+
+        pass
+else:
+    BaseModel = db.Model
 
 
 class CustomizedDumpsEncoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, datetime):
-            return obj.strftime('%Y-%m-%d %H:%M:%S')
+            return obj.strftime("%Y-%m-%d %H:%M:%S")
         elif isinstance(obj, date):
-            return obj.strftime('%Y-%m-%d')
+            return obj.strftime("%Y-%m-%d")
         return super().default(obj)
 
 
-class Base(db.Model):
+class Base(BaseModel):
     __abstract__ = True
 
     id: so.Mapped[int] = so.mapped_column(primary_key=True)
     created_at: so.Mapped[datetime] = so.mapped_column(default=func.now())
-    updated_at: so.Mapped[datetime] = so.mapped_column(default=func.now(), onupdate=func.now())
+    updated_at: so.Mapped[datetime] = so.mapped_column(
+        default=func.now(), onupdate=func.now()
+    )
 
     def __repr__(self):
         attrs = {"id": self.id}
@@ -39,9 +52,7 @@ class Base(db.Model):
 
     def as_json(self):
         return json.dumps(
-            self.as_dict(),
-            ensure_ascii=False,
-            cls=CustomizedDumpsEncoder
+            self.as_dict(), ensure_ascii=False, cls=CustomizedDumpsEncoder
         )
 
 

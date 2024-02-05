@@ -34,7 +34,7 @@ def test_add_image(client, app, set_global):
     img_thumbnail_path = root_folder / img.thumbnail_uri
     assert img_path.exists() and img_thumbnail_path.exists()
 
-    set_global('newly_added', newly_added)
+    set_global("newly_added", newly_added)
 
 
 @pytest.mark.run(order=2)

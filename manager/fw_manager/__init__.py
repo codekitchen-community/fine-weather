@@ -5,8 +5,7 @@ from flask import Flask
 from flask_wtf import CSRFProtect
 
 from . import commands, blueprints
-from .forms import UploadImageForm, EditImageForm
-from .models import db, User, Image
+from .models import db
 
 
 def create_app():

@@ -25,12 +25,13 @@ def get_global():
 def app():
     from fw_manager import create_app
     from fw_manager.models import db
+
     os.environ.update(
         {
             "FLASK_SQLALCHEMY_DATABASE_URI": "sqlite:///:memory:",
             "FLASK_SECRET_KEY": "test_secret_key",
-            "FLASK_WTF_CSRF_ENABLED": 'false',
-            "FLASK_TESTING": 'true',
+            "FLASK_WTF_CSRF_ENABLED": "false",
+            "FLASK_TESTING": "true",
         }
     )
     app = create_app()
