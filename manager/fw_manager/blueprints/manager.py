@@ -82,126 +82,97 @@ def add_image():
     img_folder = Path(current_app.static_folder) / IMG_FOLDER
     thumbnail_folder = img_folder / THUMBNAIL_FOLDER
     thumbnail_folder.mkdir(exist_ok=True, parents=True)
-    img_name = ""
 
-    try:
-        form_data = request.form
+    form_data = request.form
 
-        # check repetition
-        img_exist = db.session.scalar(
-            db.select(Image).filter_by(title=form_data["title"])
-        )
-        if img_exist:
-            return make_resp(
-                err_code="REPEAT_TITLE", msg="Image with same title exists."
-            )
+    # check repetition
+    img_exist = db.session.scalar(db.select(Image).filter_by(title=form_data["title"]))
+    if img_exist:
+        return make_resp(err_code="REPEAT_TITLE", msg="Image with same title exists.")
 
-        # save image/thumbnail
-        [(_, img_file)] = request.files.items()
+    # save image/thumbnail
+    [(_, img_file)] = request.files.items()
 
-        img_name = f"{uuid4().hex}_{img_file.filename}"
-        img_uri = img_folder / img_name
-        pil_img = PImage.open(img_file)
+    img_name = f"{uuid4().hex}_{img_file.filename}"
+    img_uri = img_folder / img_name
+    pil_img = PImage.open(img_file)
 
-        logger.info("Generating thumbnail...")
-        thumbnail_uri = thumbnail_folder / img_name
-        thumbnail, img_hash = _gen_thumbnail(pil_img)
-        logger.info("Done.")
+    logger.info("Generating thumbnail...")
+    thumbnail_uri = thumbnail_folder / img_name
+    thumbnail, img_hash = _gen_thumbnail(pil_img)
+    logger.info("Done.")
 
-        logger.info("Saving file...")
-        thumbnail.save(thumbnail_uri)
-        pil_img.save(img_uri)
-        logger.info("Done.")
+    logger.info("Saving file...")
+    thumbnail.save(thumbnail_uri)
+    pil_img.save(img_uri)
+    logger.info("Done.")
 
-        # commit db record
-        logger.info("Saving to db...")
-        w, h = pil_img.size
-        img = Image(
-            uri=img_uri.relative_to(current_app.root_path).as_posix(),
-            thumbnail_uri=thumbnail_uri.relative_to(current_app.root_path).as_posix(),
-            title=form_data["title"],
-            position=form_data["position"],
-            time=form_data["time"],
-            description=form_data["description"],
-            blurhash=img_hash,
-            width=w,
-            height=h,
-        )
-        db.session.add(img)
-        db.session.commit()
+    # commit db record
+    logger.info("Saving to db...")
+    w, h = pil_img.size
+    img = Image(
+        uri=img_uri.relative_to(current_app.root_path).as_posix(),
+        thumbnail_uri=thumbnail_uri.relative_to(current_app.root_path).as_posix(),
+        title=form_data["title"],
+        position=form_data["position"],
+        time=form_data["time"],
+        description=form_data["description"],
+        blurhash=img_hash,
+        width=w,
+        height=h,
+    )
+    db.session.add(img)
+    db.session.commit()
 
-        logger.info("Done.")
-        return make_resp(img.id), 201
-    except Exception as e:
-        err_msg = "An error occurred"
-        logger.error(f"{err_msg} during image adding:\n{e!r}")
-        if img_name:
-            (img_folder / img_name).unlink(missing_ok=True)
-            (thumbnail_folder / img_name).unlink(missing_ok=True)
-        return make_resp(err_code="INTERNAL_ERROR", msg=err_msg)
+    logger.info("Done.")
+    return make_resp(img.id), 201
 
 
 @manager_bp.put("/images/<image_id>")
 @auth.login_required
 def update_image(image_id):
     """Update info of one certain image."""
-    try:
-        form_data = request.form
+    form_data = request.form
 
-        # check existence
-        img = db.session.get(Image, image_id)
-        if not img:
-            return make_resp(
-                err_code="INVALID_IMAGE", msg="Target image does not exist."
-            )
+    # check existence
+    img = db.session.get(Image, image_id)
+    if not img:
+        return make_resp(err_code="INVALID_IMAGE", msg="Target image does not exist.")
 
-        # check repetition
-        img_repeat = db.session.scalar(
-            db.select(Image)
-            .filter_by(title=form_data["title"])
-            .filter(Image.id.isnot(image_id))
-        )
-        if img_repeat:
-            return make_resp(
-                err_code="REPEAT_TITLE", msg="Image with same title exists."
-            )
+    # check repetition
+    img_repeat = db.session.scalar(
+        db.select(Image)
+        .filter_by(title=form_data["title"])
+        .filter(Image.id.isnot(image_id))
+    )
+    if img_repeat:
+        return make_resp(err_code="REPEAT_TITLE", msg="Image with same title exists.")
 
-        img.title = form_data["title"]
-        img.position = form_data["position"]
-        img.time = form_data["time"]
-        img.description = form_data["description"]
+    img.title = form_data["title"]
+    img.position = form_data["position"]
+    img.time = form_data["time"]
+    img.description = form_data["description"]
 
-        db.session.commit()
-        return make_resp()
-    except Exception as e:
-        err_msg = "An error occurred"
-        logger.error(f"{err_msg} during updating:\n{e!r}")
-        return make_resp(err_code="INTERNAL_ERROR", msg=err_msg)
+    db.session.commit()
+    return make_resp()
 
 
 @manager_bp.delete("/images/<image_id>")
 @auth.login_required
 def delete_image(image_id):
     """Delete one certain image."""
-    try:
-        img = db.session.get(Image, image_id)
-        if not img:
-            return make_resp(
-                err_code="INVALID_IMAGE", msg="Target image does not exist."
-            )
+    img = db.session.get(Image, image_id)
+    if not img:
+        return make_resp(err_code="INVALID_IMAGE", msg="Target image does not exist.")
 
-        logger.info(f"Deleting db record: {image_id}...")
-        db.session.delete(img)
-        db.session.commit()
-        logger.info("Done.")
+    logger.info(f"Deleting db record: {image_id}...")
+    db.session.delete(img)
+    db.session.commit()
+    logger.info("Done.")
 
-        logger.info("Deleting file...")
-        root_folder = Path(current_app.root_path)
-        (root_folder / img.uri).unlink(missing_ok=True)
-        (root_folder / img.thumbnail_uri).unlink(missing_ok=True)
-        logger.info("Done.")
-        return make_resp(), 204
-    except Exception as e:
-        err_msg = "An error occurred"
-        logger.error(f"{err_msg} during deleting:\n{e!r}")
-        return make_resp(err_code="INTERNAL_ERROR", msg=err_msg)
+    logger.info("Deleting file...")
+    root_folder = Path(current_app.root_path)
+    (root_folder / img.uri).unlink(missing_ok=True)
+    (root_folder / img.thumbnail_uri).unlink(missing_ok=True)
+    logger.info("Done.")
+    return None, 204
