@@ -2,14 +2,12 @@ ci:
   autoupdate_schedule: monthly
 
 repos:
-  # export python requirements
   - repo: https://github.com/pdm-project/pdm
     rev: 2.12.3
     hooks:
       - id: pdm-export
-        # command arguments, e.g.:
-        args: ['-o', 'requirements.txt', '--without-hashes']
-        files: ^pdm.lock$
+        files: pdm.lock
+        entry: bash -c "cd manager && pdm export -o requirements.txt --without-hashes"
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.5.0
