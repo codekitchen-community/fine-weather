@@ -1,3 +1,6 @@
+{% from 'bootstrap5/utils.html' import render_icon %}
+{% from 'bootstrap5/form.html' import render_form %}
+{% from 'bootstrap5/pagination.html' import render_pagination %}
 <!doctype html>
 <html lang="en">
 
@@ -33,15 +36,9 @@
     <title>Images</title>
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.svg') }}">
     {% endblock %}
-
-
 </head>
 
 <body class="bg-light d-flex flex-column">
-    {% from 'bootstrap5/utils.html' import render_icon %}
-    {% from 'bootstrap5/form.html' import render_form %}
-    {% from 'bootstrap5/pagination.html' import render_pagination %}
-
     {% block content %}
     <div class="container-lg d-flex flex-column flex-grow-1 h-100">
         <div class="fs-1">Fine Weather Manager</div>
