@@ -72,6 +72,7 @@ target/
 
 # pyenv
 .python-version
+.pdm-python
 
 # celery beat schedule file
 celerybeat-schedule
@@ -108,3 +109,6 @@ ENV/
 
 # Other
 .DS_Store
+
+fw_manager/static/*
+!fw_manager/static/favicon.svg
