@@ -1,8 +1,7 @@
 FROM python:alpine
 
-COPY . /manager
+COPY requirements.txt .
 
-WORKDIR /manager
-
+RUN apk update && apk add gcc libc-dev libffi-dev
 RUN pip install gunicorn
 RUN pip install -r requirements.txt

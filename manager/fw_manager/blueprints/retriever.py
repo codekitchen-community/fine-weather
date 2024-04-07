@@ -15,4 +15,4 @@ def get_images():
         page=page, per_page=page_size, error_out=False
     )
     images = [p.as_dict() for p in pagination.items]
-    return {"images": images, "pages": pagination.pages}
+    return {"images": images, "pages": pagination.pages, "total": pagination.total}

@@ -8,14 +8,15 @@ services:
       IMG_FOLDER_NAME: img
       THUMBNAIL_FOLDER: thumbnail
       THUMBNAIL_MAX_WIDTH: 600
-    command: /bin/sh -c "pdm create-tables --username admin --passowrd 123456 && gunicorn -w 4 fw_manager:app -b 0.0.0.0:5000"
+    command: /bin/sh -c "flask create-tables --username admin --passowrd 123456 && gunicorn -w 4 fw_manager:app -b 0.0.0.0:5000"
     volumes:
-      - ./manager_data/img:/manager/static/img
-      - ./manager_data/instance:/manager/instance
+      - ./manager:/manager
 
   app:
     build: ./app
     ports:
-      - 80:80
+      - 20090:80
+    volumes:
+      - ./app/nginx.conf:/etc/nginx/nginx.conf
     depends_on:
       - manager
