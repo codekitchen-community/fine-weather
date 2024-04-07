@@ -11,26 +11,16 @@
         rd-2 pa-4 box-border mb-4 c-slate-800 text-justify lh-6 tracking-.5 text-0px
       " :class="{ 'flex items-center justify-between': folded }">
         <template v-if="!folded">
-          <span class="text-sm">由于有若干个能拍照的设备，再加上时间会公平地杀死一切，我每年都会拍出几张回看时感慨万千的照片。</span>
-          <span class="text-sm">但由于时间与地域的关系，这些照片往往要么丢失，要么被随意塞在网盘的某处。</span>
-          <span class="text-sm">于是，<span class="
-            relative before:w-100% before:h-.2rem before:bg-violet-300
-            before:content-[''] before:absolute before:bottom--.1rem
-            dark:before:bg-violet-500
-          " title="2022-11-28">现在</span>我决心花一些精力把它们维护起来。</span>
-          <span class="text-sm">然而，正如前面所言，原图已不易寻觅，目前所得的一些图片大多来自微信朋友圈或微博，很遗憾图片质量已损失太多。</span>
-          <span class="text-sm">而这些图片拍时多是好天气，所以干脆统称这些照片为<strong>「一些晴朗的日子」</strong>。</span>
+          <div class="text-sm">{{ INTRO }}</div>
         </template>
-        <strong class="text-1rem" v-else>「一些晴朗的日子」</strong>
+        <strong class="text-1rem" v-else>{{ TITLE }}</strong>
         <div class="
-          backdrop-blur-2 saturate-120%
-          bg-#4c1d9525
-          pa-1 rd-50% mr-2 cursor-pointer
+          backdrop-blur-2 saturate-120% bg-#4c1d9525 pa-1 rd-50% cursor-pointer
           hover:bg-#4c1d9545 active:bg-#4c1d9562
           dark:bg-violet-900 dark:c-gray-200 dark:hover:bg-violet-800 dark:active:bg-violet-700
         " :class="{
-          'absolute bottom-.5rem right-.5rem': !folded
-        }" @click="folded = !folded">
+      'absolute bottom-2 right-2': !folded
+    }" @click="folded = !folded">
           <div class="text-xl" :class="folded ? 'i-mdi-chevron-down' : 'i-mdi-chevron-up'"></div>
         </div>
       </div>
@@ -38,14 +28,8 @@
         @click="openDetail(index)" />
     </div>
     <div class="flex my-18 items-center flex-col select-none text-xs">
-      <div v-if="avReady">
-        <emoji-reaction :reactor="reactor" :react="react" :unreact="unreact"
-          :getReactions="getReactions" :dark="isDark" />
-      </div>
       <div class="text-gray-400 mb-3 mt-2.5">
-        {{ images.length }}<span class="mx-.5">/</span>{{
-          Object.keys(imagesInfoMap || {}).length - 1
-        }}
+        {{ images.length }}<span class="mx-.5">/</span>{{ totalImages }}
       </div>
       <div v-if="loadingImages" class="flex items-center">
         <i class="
@@ -56,7 +40,7 @@
       <div class="
         c-gray-600 dark:c-gray-200 cursor-pointer
         rd-2 py-1 px-2 simple-btn
-      " @click="currentPage += 1" v-else-if="hasMore">
+      " @click="loadMore" v-else-if="currPage < totalPages">
         More
       </div>
       <div class="c-gray-600 dark:c-gray-200 py-1" v-else>
@@ -67,16 +51,16 @@
       <div class="text-xl c-slate-800 flex items-center">
         <div class="
           backdrop-blur-2 saturate-120%
-         pa-1 rd-50% mr-2 cursor-pointer
+          pa-1 rd-50% mr-2 cursor-pointer
           simple-btn
         " @click="isDark = !isDark">
           <div class="i-mdi-white-balance-sunny"></div>
         </div>
         <div class="
           backdrop-blur-2 saturate-120%
-           pa-1 rd-50% cursor-pointer
+          pa-1 rd-50% cursor-pointer
           simple-btn
-        " @click="jumpTo('https://github.com/tkzt/fine-weather-gallery')">
+        " @click="jumpTo('https://github.com/codekitchen-community/fine-weather')">
           <div class="i-mdi-github"></div>
         </div>
       </div>
@@ -88,16 +72,16 @@
             ml-2 inline-flex c-gray-600 items-center cursor-pointer b-1 b-solid b-transparent
             hover:b-b-gray-600
             dark:c-gray-200 dark:hover:b-b-gray-200
-          " @click="jumpTo('https://tkzt.cn')">
-            <span>Allen Tao</span>
+          " @click="jumpTo('https://codekitchen.community/')">
+            <span>CodeKitchen Community</span>
             <i class="i-mdi-open-in-new ml-1"></i>
           </span>
         </div>
-        <div class="text-gray-400 mt-1">Last updated at {{ imagesInfoMap?.version?.update_time }}
+        <div class="text-gray-400 mt-1">Last updated at {{ lastUpdatedAt }}
         </div>
       </div>
     </footer>
-    <ImageDetail v-model="imageDetailModel" v-bind="imageDetails"
+    <ImageDetail v-model="imageDetailModel" v-bind="{ ...imageDetails, total: totalImages }"
       @lastImage="openDetail(imageDetails.current - 1)"
       @nextImage="openDetail(imageDetails.current + 1)" />
     <div class="
@@ -117,85 +101,38 @@ import {
   onMounted, reactive, ref, watchEffect,
 } from 'vue'
 import { useDark, useEventListener } from '@vueuse/core'
-import AV from 'leancloud-storage'
-import FingerprintJS from '@fingerprintjs/fingerprintjs'
-import { EmojiReaction } from 'emoji-reaction'
-import ImageCard from '../components/ImageCard.vue'
-import ImageDetail from '../components/ImageDetail.vue'
+import ImageCard from '@/components/ImageCard.vue'
+import ImageDetail from '@/components/ImageDetail.vue'
 
 const PAGE_SIZE = 20
-const AV_OBJECT_NAME = 'FineWeatherGalleryReaction'
+const TITLE = '「Fine Weather」'
+const INTRO = `这是一个相册应用，可以用来保存生活中的一些${TITLE}时刻。`
 
 const isDark = useDark()
-const images = ref([])
-const imagesInfoMap = ref(null)
 const imageDetailModel = ref(false)
 const loadingImages = ref(false)
 const folded = ref(false)
-const hasMore = ref(true)
-const currentPage = ref(0)
-const reactor = ref('')
-const avReady = ref(false)
+const isReady = ref(false)
+const loaded = ref(0)
+const currPage = ref(1)
+const totalImages = ref(0)
+const totalPages = ref(0)
+const lastUpdatedAt = ref("Thu, 01 Apr 2010 00:00:00 GMT")
 const imageDetails = reactive({
   imgMeta: {
+    blurhash: '',
+    created_at: '',
+    description: '',
+    height: '',
+    position: '',
+    time: '',
     title: '',
-    desc: '',
-    location: '',
-    year: '',
-    src: '',
-    blurHash: {
-      encoded: '',
-      size: [],
-    },
+    uri: '',
+    width: ''
   },
-  current: -1,
-  total: 0,
+  current: 0,
 })
-
-const fpPromise = FingerprintJS.load();
-(async () => {
-  const fp = await fpPromise
-  const result = await fp.get()
-  reactor.value = result.visitorId
-})()
-
-async function react(reaction) {
-  const reactionObj = new AV.Object(AV_OBJECT_NAME)
-  reactionObj.set('reaction', reaction)
-  reactionObj.set('reactor', reactor.value)
-  return reactionObj.save()
-}
-
-async function unreact(reaction) {
-  const query = new AV.Query(AV_OBJECT_NAME)
-  return query.equalTo('reaction', reaction).equalTo('reactor', reactor.value).destroyAll()
-}
-
-async function getReactions() {
-  try {
-    const query = new AV.Query(AV_OBJECT_NAME)
-    return query.find().then((records) => records.reduce((pre, curr) => {
-      const { reaction, reactor: _reactor } = curr.toJSON()
-      const existedReaction = pre.find((p) => p.reaction === reaction)
-      if (existedReaction) {
-        if (!existedReaction.reactors.includes(_reactor)) {
-          existedReaction.reactors.push(_reactor)
-        }
-      } else {
-        pre.push({
-          reaction,
-          reactors: [_reactor],
-        })
-      }
-      return pre
-    }, []))
-  } catch (err) {
-    // mostly, 404 error occurs
-    // eslint-disable-next-line no-console
-    console.error(err)
-    return new Promise((resolve) => { resolve([]) })
-  }
-}
+const images = ref([])
 
 function jumpTo(url) {
   const a = document.createElement('a')
@@ -204,9 +141,12 @@ function jumpTo(url) {
   a.click()
 }
 
-function openDetail(index) {
-  imageDetails.current = index
+async function openDetail(index) {
+  if (index >= images.value.length) {
+    await loadMore()
+  }
   imageDetails.imgMeta = images.value[index]
+  imageDetails.current = index
   imageDetailModel.value = true
 }
 
@@ -216,69 +156,35 @@ function keypressListener(ev) {
       imageDetailModel.value = false
     } else if (ev.key === 'ArrowLeft' && imageDetails.current > 0) {
       openDetail(imageDetails.current - 1)
-    } else if (ev.key === 'ArrowRight' && imageDetails.current < imageDetails.total - 1) {
+    } else if (ev.key === 'ArrowRight' && imageDetails.current < totalImages.value - 1) {
       openDetail(imageDetails.current + 1)
     }
   }
 }
 
-async function init() {
-  // lc
-  AV.init({
-    appId: import.meta.env.VITE_LC_APP_ID,
-    appKey: import.meta.env.VITE_LC_APP_KEY,
-    serverURL: import.meta.env.VITE_LC_SERVER_URL,
-  })
-
-  // info map
-  imagesInfoMap.value = await (await fetch(`${import.meta.env.VITE_IMG_FETCH_PREFIX + import.meta.env.VITE_IMG_NAME_PREFIX}images.json`, {
-    method: 'GET',
-    mode: 'cors',
-  })).json()
-}
-
-async function loadImages(page = 0) {
+async function loadMore() {
   loadingImages.value = true
-  const query = new AV.Query('Image')
-  query.limit(PAGE_SIZE).skip(page * PAGE_SIZE)
+  const resp = await fetch(`${import.meta.env.VITE_IMG_FETCH_BASE}/images?page_size=${PAGE_SIZE}&page=${currPage.value}`)
+  if (resp.status === 200) {
+    const imagesResult = await resp.json()
+    currPage.value += 1
+    totalImages.value = imagesResult.total
+    totalPages.value = imagesResult.pages
 
-  const response = (await query.find())
-  const appendImages = response.filter(
-    (r) => images.value.every((i) => i.src !== r.attributes.name),
-  ).map((r) => {
-    const { attributes } = r
-    const info = imagesInfoMap.value[import.meta.env.VITE_IMG_NAME_PREFIX + attributes.name]
-
-    return {
-      ...attributes,
-      src: attributes.name,
-      blurHash: {
-        size: info.size,
-        encoded: info.hash,
-      },
-    }
-  })
-
-  images.value.push(...appendImages)
-  imageDetails.total = images.value.length
+    images.value.push(...imagesResult.images)
+    imagesResult.images.forEach(img => {
+      if (new Date(img.updated_at) > new Date(lastUpdatedAt.value)) {
+        lastUpdatedAt.value = img.updated_at
+      }
+    })
+  }
   loadingImages.value = false
-
-  return appendImages.length === PAGE_SIZE
 }
 
-onMounted(async () => {
-  await init()
-
-  // register keypress event
+onMounted(() => {
   useEventListener(document, 'keydown', keypressListener)
-
-  avReady.value = true
-})
-
-watchEffect(async () => {
-  if (imagesInfoMap.value && hasMore.value) {
-    hasMore.value = await loadImages(currentPage.value)
-  }
+  loadMore()
+  isReady.value = true
 })
 
 watchEffect(() => {

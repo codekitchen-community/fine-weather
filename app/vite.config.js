@@ -1,10 +1,9 @@
-/* eslint-disable import/no-extraneous-dependencies */
-import { defineConfig } from 'vite';
-import vue from '@vitejs/plugin-vue';
-import UnoCSS from 'unocss/vite';
-import { presetUno, presetIcons } from 'unocss';
-import { resolve } from 'path';
-import transformerDirectives from '@unocss/transformer-directives';
+import { defineConfig } from 'vite'
+import vue from '@vitejs/plugin-vue'
+import UnoCSS from 'unocss/vite'
+import { presetUno, presetIcons } from 'unocss'
+import { resolve } from 'path'
+import transformerDirectives from '@unocss/transformer-directives'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -17,4 +16,12 @@ export default defineConfig({
       '@': resolve(__dirname, 'src'),
     },
   },
-});
+  server: {
+    proxy: {
+      '^/manager': {
+        target: 'http://localhost:20099',
+        changeOrigin: true
+      }
+    }
+  }
+})

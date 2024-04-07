@@ -41,7 +41,7 @@ import { decode } from 'blurhash'
 import ImageAsync from './ImageAsync.vue'
 
 const props = defineProps({
-  src: String,
+  thumbnail_uri: String,
   title: {
     type: String,
     default: '无题',
@@ -49,28 +49,26 @@ const props = defineProps({
   location: String,
   year: String,
   desc: String,
-  blurHash: {
-    encoded: String,
-    size: Array,
-  },
+  blurhash: String,
+  height: Number,
+  width: Number
 })
 const skeletonRef = ref(null)
 const containerRef = ref()
 
 const imgSrc = computed(
-  () => `${import.meta.env.VITE_IMG_FETCH_PREFIX + import.meta.env.VITE_IMG_NAME_PREFIX}thumbnail/${props.src}`,
+  () => `${import.meta.env.VITE_IMG_FETCH_BASE}/${props.thumbnail_uri}`,
 )
 const minImageHeight = computed(
   () => Math.floor(
-    (containerRef.value?.offsetWidth || 0) * (props.blurHash.size[1] / props.blurHash.size[0]),
+    (containerRef.value?.offsetWidth || 0) * (props.height / props.width),
   ),
 )
 
 onMounted(() => {
-  const originSize = props.blurHash.size
-  skeletonRef.value.height = Math.floor((originSize[1] / originSize[0]) * 32)
+  skeletonRef.value.height = Math.floor((props.height / props.width) * 32)
 
-  const pixels = decode(props.blurHash.encoded, 32, 32)
+  const pixels = decode(props.blurhash, 32, 32)
   const ctx = skeletonRef.value.getContext('2d')
   const imageData = ctx.createImageData(32, 32)
   imageData.data.set(pixels)

@@ -9,4 +9,3 @@ RUN pwd && ls -l && pnpm i && pnpm build
 FROM nginx:alpine
 
 COPY --from=0 /app/dist /usr/share/nginx/html/
-COPY nginx.conf /etc/nginx/nginx.conf
