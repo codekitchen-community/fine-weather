@@ -7,5 +7,6 @@
     "editor.defaultFormatter": "Vue.volar",
   },
   "javascript.format.semicolons": "remove",
+  "javascript.preferences.quoteStyle": "auto",
   "html.format.wrapLineLength": 98,
 }
