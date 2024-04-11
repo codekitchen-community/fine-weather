@@ -103,6 +103,12 @@ def add_image():
     logger.info("Done.")
 
     logger.info("Saving file...")
+    if (
+        any([img_uri.name.lower().endswith(suffix) for suffix in ["jpg", "jpeg"]])
+        and pil_img.mode == "RGBA"
+    ):
+        pil_img = pil_img.convert("RGB")
+        thumbnail = thumbnail.convert("RGB")
     thumbnail.save(thumbnail_uri)
     pil_img.save(img_uri)
     logger.info("Done.")

@@ -50,7 +50,8 @@
             </div>
             <div>
                 <div class="input-group flex-grow-0">
-                    <input type="text" class="form-control" placeholder="Filter by keyword..." id="keyword-input" onkeyup="event.key==='Enter' && filterByKeyword()">
+                    <input type="text" class="form-control" placeholder="Filter by keyword..."
+                        id="keyword-input" onkeyup="event.key==='Enter' && filterByKeyword()">
                     <button class="btn btn-primary" type="button" onclick="filterByKeyword()">
                         {{ render_icon("search") }}
                     </button>
@@ -75,24 +76,28 @@
                     <tr class="align-middle">
                         <td>{{ loop.index }}</td>
                         <td>
-                            <img src="{{ '/'+image['thumbnail_uri'] }}" class="img-thumbnail d-block">
+                            <img src="{{ '/'+image['thumbnail_uri'] }}"
+                                class="img-thumbnail d-block">
                         </td>
                         <td>{{ image['title'] }}</td>
                         <td>{{ image['description'] }}</td>
                         <td>{{ image['position'] }}</td>
                         <td>{{ image['time'] }}</td>
                         <td>
-                            <button type="button" class="btn btn-sm text-primary" onclick="toEditImage({{ image.as_json() }})">
+                            <button type="button" class="btn btn-sm text-primary"
+                                onclick="toEditImage({{ image.as_json() }})">
                                 {{ render_icon("pencil-square") }}
                             </button>
-                            <button type="button" class="btn btn-sm text-danger" onclick="toDeleteImage({{ image.as_json() }})">
+                            <button type="button" class="btn btn-sm text-danger"
+                                onclick="toDeleteImage({{ image.as_json() }})">
                                 {{ render_icon("trash") }}
                             </button>
                         </td>
                     </tr>
                     {% else %}
                     <tr>
-                        <td colspan="7" class="text-secondary fs-6 text-center" style="pointer-events: none; --bs-text-opacity: .7;">
+                        <td colspan="7" class="text-secondary fs-6 text-center"
+                            style="pointer-events: none; --bs-text-opacity: .7;">
                             No Data
                         </td>
                     </tr>
@@ -105,7 +110,8 @@
         </div>
     </div>
 
-    <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-2 flex-grow-0">
+    <footer
+        class="d-flex flex-wrap justify-content-between align-items-center py-3 my-2 flex-grow-0">
         <div class="m-auto">
             <p class="text-muted">
                 &copy; {{ year }} CodeKitchen Community
@@ -119,13 +125,16 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h1 class="modal-title fs-5">Upload Image</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    {{ render_form(add_form, extra_classes="row g-3", form_group_classes="col-12 col-lg-6") }}
+                    {{ render_form(add_form, extra_classes="row g-3", form_group_classes="col-12
+                    col-lg-6") }}
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-secondary"
+                        data-bs-dismiss="modal">Cancel</button>
                     <button type="button" class="btn btn-primary" onclick="addImage()">Okay</button>
                 </div>
             </div>
@@ -137,7 +146,8 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h1 class="modal-title fs-5">Edit Image</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="row g-3">
@@ -150,13 +160,16 @@
                             </div>
                         </div>
                         <div class="col-5">
-                            {{ render_form(edit_form, extra_classes="row g-3", form_group_classes="col-12") }}
+                            {{ render_form(edit_form, extra_classes="row g-3",
+                            form_group_classes="col-12") }}
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-primary" onclick="editImage()">Okay</button>
+                    <button type="button" class="btn btn-secondary"
+                        data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary"
+                        onclick="editImage()">Okay</button>
                 </div>
             </div>
         </div>
@@ -167,14 +180,17 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h1 class="modal-title fs-5">Delete Confirm</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     Sure to delete image "<strong id="img-name"></strong>"?
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-danger" onclick="deleteImage()">Delete</button>
+                    <button type="button" class="btn btn-secondary"
+                        data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger"
+                        onclick="deleteImage()">Delete</button>
                 </div>
             </div>
         </div>
@@ -182,11 +198,13 @@
 
     <!-- Toasts -->
     <div class="toast-container position-fixed bottom-0 end-0 p-3">
-        <div id="toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="1500">
+        <div id="toast" class="toast" role="alert" aria-live="assertive" aria-atomic="true"
+            data-bs-delay="1500">
             <div class="toast-header">
                 <span class="badge d-inline-block"></span>
                 <strong class="me-auto"></strong>
-                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="toast"
+                    aria-label="Close"></button>
             </div>
             <div class="toast-body">
             </div>
@@ -230,7 +248,7 @@
                 body: formData,
             });
 
-            if (respRaw.status === 200) {
+            if (respRaw.status === 201) {
                 const resp = await respRaw.json();
                 if (!resp.err_code) {
                     addImageModal.hide();
