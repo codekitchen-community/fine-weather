@@ -33,7 +33,7 @@ def verify_password(username, password):
     return check_password_hash(user.password_hash, password)
 
 
-def _gen_thumbnail(src_img: PImage) -> tuple[PImage, str]:
+def _gen_thumbnail(src_img: PImage.Image) -> tuple[PImage.Image, str]:
     img = src_img.copy()
     w, h = img.size
     img.thumbnail((THUMBNAIL_MAX_WIDTH, round(THUMBNAIL_MAX_WIDTH / w * h)))
