@@ -19,17 +19,19 @@
     ">
       <div class="c-white overflow-hidden">
         <div class="text-xl fw-bold">{{ title }}</div>
-        <div class="text-sm flex mt-2" v-if="location || year">
-          <div v-if="location" class="flex items-center mr-2">
+        <div class="text-sm flex mt-2" v-if="position || time">
+          <div v-if="position" class="flex items-center mr-2">
             <i class="i-mdi-map-marker mr-1"></i>
-            {{ location }}
+            {{ position }}
           </div>
-          <div v-if="year" class="flex items-center">
+          <div v-if="time" class="flex items-center">
             <i class="i-mdi-clock mr-1"></i>
-            {{ year }}
+            {{ time }}
           </div>
         </div>
-        <div class="text-sm text-truncate mt-2" v-if="desc" :title="desc">{{ desc }}</div>
+        <div class="text-sm text-truncate mt-2" v-if="description" :title="description">{{
+          description
+        }}</div>
       </div>
     </div>
   </div>
@@ -46,9 +48,9 @@ const props = defineProps({
     type: String,
     default: '无题',
   },
-  location: String,
-  year: String,
-  desc: String,
+  position: String,
+  time: String,
+  description: String,
   blurhash: String,
   height: Number,
   width: Number

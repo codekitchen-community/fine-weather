@@ -47,15 +47,15 @@
         <div class="mt-6 flex lg:text-lg">
           <span class="mr-6 flex items-center">
             <i class="i-mdi-map-marker inline-block mr-1"></i>
-            {{ imgMeta.location }}
+            {{ imgMeta.position }}
           </span>
           <span class="flex items-center">
             <i class="i-mdi-clock inline-block  mr-1"></i>
-            {{ imgMeta.year }}
+            {{ imgMeta.time }}
           </span>
         </div>
         <div class="text-justify tracking-.05rem lh-150% lg:text-lg mt-4">
-          {{ imgMeta.desc || '无描述 :/' }}
+          {{ imgMeta.description || '无描述 :/' }}
         </div>
       </div>
     </Transition>
@@ -74,9 +74,9 @@ const props = defineProps({
   imgMeta: {
     src: String,
     title: String,
-    location: String,
-    year: String,
-    desc: String,
+    position: String,
+    time: String,
+    description: String,
     blurHash: {
       encoded: String,
       size: Array,
