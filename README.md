@@ -6,68 +6,34 @@
 
 ## Introduction
 
-FineWeather is a photo album application built with Vue3 and BootstrapFlask. The app aims to provide a clean, beautiful, and easy-to-use interface for managing and browsing your photos.
+Fine Weather is a photo album application based on [Vue](https://github.com/vuejs/core) and [BootstrapFlask](https://github.com/helloflask/bootstrap-flask), which is built to collect fine-weather moments of life.
 
-## Features
-
-- **Photo Upload**: Users can easily upload photos.
-- **Photo Browsing**: Users can browse uploaded photos with thumbnail and full-screen views.
-- **Photo Categorization**: Users can categorize photos for better management.
-- **Search Functionality**: Users can search for photos using keywords.
-- **Responsive Design**: The app displays well on various devices.
-
-## Tech Stack
-
-- **Frontend**: Vue3
-- **Backend**: BootstrapFlask
-- **Database**: SQLite
-
-## Installation and Usage
-
-### Frontend
+## Quick Start
 
 1. Clone the repository
     ```bash
-    git clone https://github.com/yourusername/FineWeather.git
-    cd FineWeather/frontend
+    git clone https://github.com/codekitchen-community/fine-weather.git && cd fine-weather
     ```
 
-2. Install dependencies
+2. Update your auth configuration in `docker-compose.yml`
+
+3. Start up with docker-compose
     ```bash
-    npm install
+    docker compose up -d
     ```
 
-3. Run the development server
-    ```bash
-    npm run serve
-    ```
-
-### Backend
-
-1. Navigate to the backend directory
-    ```bash
-    cd ../backend
-    ```
-
-2. Create and activate a virtual environment
-    ```bash
-    python -m venv venv
-    source venv/bin/activate  # For Windows users, use `venv\Scripts\activate`
-    ```
-
-3. Install dependencies
-    ```bash
-    pip install -r requirements.txt
-    ```
-
-4. Run the Flask server
-    ```bash
-    flask run
-    ```
+4. Visit endpoints for photos managing or browsing.
+    By default:
+    - The app: **http://localhost**
+    - The manager: **http://localhost:20090**
 
 ## Contributing
 
 Any form of contribution is welcome! Please submit a Pull Request or create an Issue to report problems or suggest improvements.
+
+## Credits
+
+- [Fine Weather Gallery](https://github.com/tkzt/fine-weather-gallery) - The original project
 
 ## License
 
