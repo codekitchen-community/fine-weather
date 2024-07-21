@@ -40,7 +40,7 @@
       <div class="
         c-gray-600 dark:c-gray-200 cursor-pointer
         rd-2 py-1 px-2 simple-btn
-      " @click="loadMore" v-else-if="currPage < totalPages">
+      " @click="loadMore" v-else-if="currPage <= totalPages">
         More
       </div>
       <div class="c-gray-600 dark:c-gray-200 py-1" v-else>
