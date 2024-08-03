@@ -41,3 +41,4 @@ virtualenv==20.25.0
 werkzeug==3.0.1
 win32-setctime==1.1.0; sys_platform == "win32"
 wtforms==3.1.1
+flask-cors==4.0.1
