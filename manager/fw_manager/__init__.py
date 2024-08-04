@@ -3,6 +3,7 @@ from pathlib import Path
 from flask_bootstrap import Bootstrap5
 from flask import Flask
 from flask_wtf import CSRFProtect
+from flask_cors import CORS
 
 from . import commands, blueprints
 from .models import db
@@ -14,6 +15,7 @@ def create_app():
 
     Bootstrap5(app)
     CSRFProtect(app)
+    CORS(app)
     commands.init_app(app)
     db.init_app(app)
     blueprints.init_app(app)
