@@ -4,6 +4,7 @@ import UnoCSS from 'unocss/vite'
 import { presetUno, presetIcons } from 'unocss'
 import { resolve } from 'path'
 import transformerDirectives from '@unocss/transformer-directives'
+import process from "node:process"
 
 // https://vitejs.dev/config/
 export default defineConfig({
