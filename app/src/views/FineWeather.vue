@@ -8,7 +8,7 @@
       <div class="
         bg-#4c1d9525 backdrop-blur-2 saturate-120%
         dark:bg-violet-950 dark:c-gray-200 break-inside-avoid
-        rd-2 pa-4 box-border mb-4 c-slate-800 text-justify lh-6 tracking-.1 text-0px
+        rd-2 pa-4 box-border mb-4 c-slate-800 text-justify lh-6 text-0px
       " :class="{ 'flex items-center justify-between': folded }">
         <template v-if="!folded">
           <div class="text-sm">{{ INTRO }}</div>
@@ -106,7 +106,7 @@ import ImageDetail from '@/components/ImageDetail.vue'
 
 const PAGE_SIZE = 20
 const TITLE = '「Fine Weather」'
-const INTRO = `Fine Weather is a photo album application based on Vue and BootstrapFlask, which is built to collect ${TITLE} moments of life`
+const INTRO = `Fine Weather is a photo album application based on Vue and BootstrapFlask, which is built to collect ${TITLE} moments of life.`
 
 const isDark = useDark()
 const imageDetailModel = ref(false)
