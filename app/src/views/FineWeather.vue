@@ -88,7 +88,11 @@
       fixed h-100vh w-100vw flex items-center justify-center top-0 left-0
       bg-[rgba(47,14,59,0.62)] backdrop-blur-20 saturate-120
     " v-if="!images.length">
-      <div>请上传照片～</div>
+      <i v-if="loadingImages" class="
+        i-mdi-loading animate-iteration-infinite c-white block
+        text-3xl lg:text-4xl animate-spin
+      " />
+      <div v-else>请上传照片～</div>
     </div>
   </main>
 </template>
