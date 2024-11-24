@@ -45,11 +45,11 @@
       " v-if="!folded">
         <div class="fw-bold text-3xl lg:text-4xl">{{ imgMeta.title || '无题' }}</div>
         <div class="mt-6 flex lg:text-lg">
-          <span class="mr-6 flex items-center">
+          <span v-if="imgMeta.position" class="mr-6 flex items-center">
             <i class="i-mdi-map-marker inline-block mr-1"></i>
             {{ imgMeta.position }}
           </span>
-          <span class="flex items-center">
+          <span v-if="imgMeta.time" class="flex items-center">
             <i class="i-mdi-clock inline-block  mr-1"></i>
             {{ imgMeta.time }}
           </span>
