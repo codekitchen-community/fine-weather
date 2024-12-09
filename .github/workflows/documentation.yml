@@ -1,0 +1,36 @@
+name: Documentation Workflow
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+permissions:
+    contents: read
+    pages: write
+    id-token: write
+
+jobs:
+  test:
+    name: Documentation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Move manager out
+        run: mv ./manager/* ./
+      - name: Setup PDM
+        uses: pdm-project/setup-pdm@v3
+        with:
+          python-version: '3.12'
+          cache: true
+      - name: Install dependencies
+        run: pdm install -Gdoc
+      - name: Build documentation
+        run: pdm run mkdocs build --clean
+      - name: Upload to GitHub Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
