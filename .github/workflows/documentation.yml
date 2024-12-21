@@ -12,7 +12,9 @@ permissions:
     id-token: write
 
 jobs:
-  test:
+  deploy:
+    environment:
+      name: github-pages
     name: Documentation
     runs-on: ubuntu-latest
     steps:
