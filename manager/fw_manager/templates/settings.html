@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% from 'bootstrap5/form.html' import render_form %}
+
+{% block title %}FineWeather Manager - Settings{% endblock %}
+
+{% block content %}
+<div class="container-lg d-flex flex-column flex-grow-1 h-100">
+    <div class="fs-1">Settings</div>
+    <div class="align-items-center justify-content-space-between mt-3 mb-4 w-50">        
+        {{ render_form(form) }}
+    </div>
+</div>
+{% endblock %}

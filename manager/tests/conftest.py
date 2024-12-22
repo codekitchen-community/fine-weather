@@ -24,7 +24,7 @@ def get_global():
 @pytest.fixture(autouse=True, scope="session")
 def app():
     from fw_manager import create_app
-    from fw_manager.models import db
+    from fw_manager.models import db, Site
 
     os.environ.update(
         {
@@ -38,6 +38,11 @@ def app():
 
     with app.app_context():
         db.create_all()
+
+        site = Site(title="Fine Weather")
+        db.session.add(site)
+        db.session.commit()
+
         yield app
         db.drop_all()
 

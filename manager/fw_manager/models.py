@@ -61,6 +61,12 @@ class User(Base):
     password_hash: so.Mapped[str]
 
 
+class Site(Base):
+    title: so.Mapped[str]
+    description: so.Mapped[Optional[str]]
+    no_image_tip: so.Mapped[Optional[str]]
+
+
 class Image(Base):
     uri: so.Mapped[str] = so.mapped_column(unique=True)
     thumbnail_uri: so.Mapped[str]

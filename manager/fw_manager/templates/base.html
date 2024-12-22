@@ -1,0 +1,77 @@
+{% from 'bootstrap5/utils.html' import render_icon %}
+{% from 'bootstrap5/form.html' import render_form %}
+{% from 'bootstrap5/pagination.html' import render_pagination %}
+{% from 'bootstrap5/nav.html' import render_nav_item %}
+<!doctype html>
+<html lang="en">
+
+<head>
+    {% block head %}
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    {% block styles %}
+    <!-- Bootstrap CSS -->
+    {{ bootstrap.load_css() }}
+    <style>
+        html {
+            height: 100%;
+        }
+
+        body {
+            min-height: 100%;
+        }
+
+        .img-thumbnail {
+            height: 50px;
+        }
+
+        .toast-header .badge {
+            width: 16px;
+            height: 16px;
+        }
+    </style>
+    {% endblock %}
+
+    <title>{% block title %}FineWeather Manager{% endblock %}</title>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.svg') }}">
+    {% endblock %}
+</head>
+
+<body class="bg-light d-flex flex-column">
+    <div class="container-lg mt-3 mb-4">
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #4c1d9575;">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="#">FineWeather Manager</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              {{ render_nav_item('manager.images_page', 'Home') }}
+              {{ render_nav_item('manager.settings_page', 'Settings') }}
+            </ul>
+          </div>
+        </div>
+    </nav>
+    </div>
+    {% block content %}
+    {% endblock %}
+    
+    {% block scripts %}
+    <!-- Optional JavaScript -->
+    {{ bootstrap.load_js() }}
+    {% endblock %}
+</body>
+
+<footer
+    class="d-flex flex-wrap justify-content-between align-items-center py-3 my-2 flex-grow-0">
+    <div class="m-auto">
+        <p class="text-muted">
+            &copy; {{ year }} CodeKitchen Community
+        </p>
+    </div>
+</footer>
+
+</html>
