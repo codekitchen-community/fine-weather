@@ -1,0 +1,3 @@
+- Responsive design
+- Easy to use
+- Easy to deploy

@@ -1,17 +1,42 @@
-# Welcome to MkDocs
+<p align="center">
+    <img src="_assets/fine-weather-gallery.ico" />
+    <br />
+    <h1 align="center">Fine Weather</h1>
+</p>
 
-For full documentation visit [mkdocs.org](https://www.mkdocs.org).
+## Introduction
 
-## Commands
+Fine Weather is a photo album application based on [Vue](https://github.com/vuejs/core) and [BootstrapFlask](https://github.com/helloflask/bootstrap-flask), which is built to collect fine-weather moments of life.
 
-* `mkdocs new [dir-name]` - Create a new project.
-* `mkdocs serve` - Start the live-reloading docs server.
-* `mkdocs build` - Build the documentation site.
-* `mkdocs -h` - Print help message and exit.
+## Quick Start
 
-## Project layout
+1. Clone the repository
 
-    mkdocs.yml    # The configuration file.
-    docs/
-        index.md  # The documentation homepage.
-        ...       # Other markdown pages, images and other files.
+```bash
+git clone https://github.com/codekitchen-community/fine-weather.git && cd fine-weather
+```
+
+2. Update your auth configuration in `docker-compose.yml`
+
+3. Start up with docker-compose
+
+```bash
+docker compose up -d
+```
+
+4. Visit endpoints for photos managing or browsing.
+    By default:
+    - The app: **http://localhost**
+    - The manager: **http://localhost:20090**
+
+## Contributing
+
+Any form of contribution is welcome! Please submit a Pull Request or create an Issue to report problems or suggest improvements.
+
+## Credits
+
+- [Fine Weather Gallery](https://tkzt.cn/blogs/fine_weather_gallery) - The original project
+
+## License
+
+This project is licensed under the [MIT License](https://github.com/codekitchen-community/fine-weather/blob/main/LICENSE).
