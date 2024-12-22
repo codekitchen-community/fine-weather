@@ -6,26 +6,25 @@ theme:
   language: en
   name: material
   palette:
-    primary: deep-orange
+    primary: deep-purple
     accent: amber
     theme: default
   features:
     - navigation.footer
   favicon: _assets/fine-weather-gallery.ico
+  logo: _assets/fine-weather-gallery.ico
 repo_url: https://github.com/codekitchen-community/fine-weather
 repo_name: codekitchen-community/fine-weather
-copyright: Copyright © 2024 代码厨房 - 编程和开源爱好者社区
+copyright: Copyright © 2024 <a href="https://codekitchen.community/" target="_blank">CodeKitchen Community</a>
 nav:
   - Home: index.md
-  - About: about.md
   - Features: features.md
   - Changelog: changelog.md
-  - License: license.md
-    
+
 
 plugins:
   - search:
-      lang: 
+      lang:
         - en
         - zh
   - i18n:

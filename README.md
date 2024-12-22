@@ -8,6 +8,9 @@
 
 Fine Weather is a photo album application based on [Vue](https://github.com/vuejs/core) and [BootstrapFlask](https://github.com/helloflask/bootstrap-flask), which is built to collect fine-weather moments of life.
 
+Documentation is [here](https://codekitchen-community.github.io/fine-weather/).
+Community deployment is [here](https://fineweather.pythonanywhere.com/static/app).
+
 ## Quick Start
 
 1. Clone the repository
@@ -37,4 +40,4 @@ Any form of contribution is welcome! Please submit a Pull Request or create an I
 
 ## License
 
-This project is licensed under the MIT License.
+This project is licensed under the [MIT License](https://github.com/codekitchen-community/fine-weather/blob/main/LICENSE).
