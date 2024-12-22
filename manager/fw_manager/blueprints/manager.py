@@ -1,5 +1,4 @@
 import os.path
-from datetime import datetime
 from pathlib import Path
 from uuid import uuid4
 
@@ -12,12 +11,13 @@ from sqlalchemy import or_
 from werkzeug.security import check_password_hash
 
 from ..utils import make_resp
-from ..models import User, Image, db
-from ..forms import UploadImageForm, EditImageForm
+from ..models import User, Image, Site, db
+from ..forms import UploadImageForm, EditImageForm, SettingsForm
 
 IMG_FOLDER = os.environ.get("IMG_FOLDER_NAME", "img")
 THUMBNAIL_FOLDER = os.environ.get("THUMBNAIL_FOLDER_NAME", "thumbnail")
 THUMBNAIL_MAX_WIDTH = int(os.environ.get("THUMBNAIL_MAX_WIDTH", 600))
+DEFAULT_NO_IMAGE_TIP = os.environ.get("DEFAULT_NO_IMAGE_TIP", "No image.")
 
 
 manager_bp = Blueprint("manager", __name__)
@@ -69,10 +69,27 @@ def images_page():
     return render_template(
         "manager.html",
         pagination=pagination,
-        year=datetime.now().year,
         add_form=UploadImageForm(),
         edit_form=EditImageForm(),
     )
+
+
+@manager_bp.route("/settings", methods=["GET", "POST"])
+@auth.login_required
+def settings_page():
+    form = SettingsForm()
+    site = Site.query.first()
+    if form.validate_on_submit():
+        site.title = form.site_title.data
+        site.description = form.site_description.data
+        site.no_image_tip = form.no_image_tip.data
+        db.session.commit()
+        return redirect(url_for(".images_page"))
+    if request.method == "GET":
+        form.site_title.data = site.title
+        form.site_description.data = site.description
+        form.no_image_tip.data = site.no_image_tip or DEFAULT_NO_IMAGE_TIP
+    return render_template("settings.html", form=form)
 
 
 @manager_bp.post("/images")

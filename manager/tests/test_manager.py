@@ -110,14 +110,31 @@ def test_update_repeat(client, get_global, set_global):
 
 
 @pytest.mark.run(order=5)
+def test_update_settings(client, set_global):
+    resp = client.post(
+        "/manager/settings",
+        data={
+            "site_title": "Test title",
+            "site_description": "Test description",
+            "no_image_tip": "Test tip",
+        },
+        follow_redirects=True,
+    )
+    assert resp.status_code == 200
+
+
+@pytest.mark.run(order=6)
 def test_retrieve_image(client, get_global):
     resp = client.get("/images")
     assert resp.status_code == 200
     assert isinstance(resp.json["pages"], int)
     assert isinstance(resp.json["images"], list) and len(resp.json["images"]) == 2
+    assert resp.json["site_title"] == "Test title"
+    assert resp.json["site_description"] == "Test description"
+    assert resp.json["no_image_tip"] == "Test tip"
 
 
-@pytest.mark.run(order=6)
+@pytest.mark.run(order=7)
 def test_delete_image(client, app, get_global):
     img_id = get_global("newly_added")
     img_id_another = get_global("another_image")

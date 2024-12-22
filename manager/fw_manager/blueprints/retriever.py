@@ -1,6 +1,6 @@
 from flask import request, Blueprint
 
-from ..models import Image
+from ..models import db, Image, Site
 
 
 retriever_bp = Blueprint("retriever", __name__)
@@ -15,4 +15,12 @@ def get_images():
         page=page, per_page=page_size, error_out=False
     )
     images = [p.as_dict() for p in pagination.items]
-    return {"images": images, "pages": pagination.pages, "total": pagination.total}
+    site = db.session.scalar(db.select(Site))
+    return {
+        "images": images,
+        "pages": pagination.pages,
+        "total": pagination.total,
+        "site_title": site.title,
+        "site_description": site.description,
+        "no_image_tip": site.no_image_tip,
+    }
