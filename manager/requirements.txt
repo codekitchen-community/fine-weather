@@ -6,7 +6,7 @@ blinker==1.8.2
 blurhash-python==1.2.2
 bootstrap-flask==2.4.0
 certifi==2024.8.30
-cffi==1.16.0
+cffi==1.17.1
 cfgv==3.4.0
 charset-normalizer==3.4.0
 click==8.1.7

@@ -9,11 +9,11 @@
         bg-#4c1d9525 backdrop-blur-2 saturate-120%
         dark:bg-violet-950 dark:c-gray-200 break-inside-avoid
         rd-2 pa-4 box-border mb-4 c-slate-800 text-justify lh-6 text-0px
-      " :class="{ 'flex items-center justify-between': folded }">
+      " :class="{ 'flex items-center justify-between': folded }" v-if="images.length">
         <template v-if="!folded">
-          <div class="text-sm">{{ INTRO }}</div>
+          <div class="text-sm">{{ fwMeta.intro }}</div>
         </template>
-        <strong class="text-1rem" v-else>{{ TITLE }}</strong>
+        <strong class="text-1rem" v-else>{{ fwMeta.title }}</strong>
         <div class="
           backdrop-blur-2 saturate-120% bg-#4c1d9525 pa-1 rd-50% cursor-pointer
           hover:bg-#4c1d9545 active:bg-#4c1d9562
@@ -81,18 +81,22 @@
         </div>
       </div>
     </footer>
-    <ImageDetail v-model="imageDetailModel" v-bind="{ ...imageDetails, total: totalImages }"
+    <ImageDetail v-model="imageDetailModel" v-bind="imageDetails"
       @lastImage="openDetail(imageDetails.current - 1)"
-      @nextImage="openDetail(imageDetails.current + 1)" />
-    <div class="
-      fixed h-100vh w-100vw flex items-center justify-center top-0 left-0
-      bg-[rgba(47,14,59,0.62)] backdrop-blur-20 saturate-120
-    " v-if="!images.length">
+      @nextImage="openDetail(imageDetails.current + 1)" :total="totalImages" />
+    <div v-if="!images.length" class="fixed h-100vh w-100vw flex items-center justify-center top-0 left-0
+      bg-[rgba(47,14,59,0.62)] backdrop-blur-20 saturate-120">
       <i v-if="loadingImages" class="
         i-mdi-loading animate-iteration-infinite c-white block
         text-3xl lg:text-4xl animate-spin
       " />
-      <div v-else>请上传照片～</div>
+      <div v-else
+        class="text-gray-800 dark:text-gray-300 text-sm inline-flex flex-col items-center justify-center">
+        <div class="flex items-center mb-1">{{ fwMeta.noImageTip }}<i
+            class="inline-block i-line-md:cloud-alt-filled-loop ml-1"></i></div>
+        <div class="text-xs opacity-80 cursor-pointer hover:underline" @click="toManager">Click to
+          Upload</div>
+      </div>
     </div>
   </main>
 </template>
@@ -106,15 +110,15 @@ import ImageCard from '@/components/ImageCard.vue'
 import ImageDetail from '@/components/ImageDetail.vue'
 
 const PAGE_SIZE = 20
-const TITLE = '「Fine Weather」'
-const INTRO = `Fine Weather is a photo album application based on Vue and BootstrapFlask, which is built to collect ${TITLE} moments of life.`
+const DEFAULT_TITLE = '「Fine Weather」'
+const DEFAULT_INTRO = `Fine Weather is a photo album application based on Vue and BootstrapFlask, which is built to collect ${DEFAULT_TITLE} moments of life.`
+const DEFAULT_NO_IMAGE_TIP = '暂时没有好天气'
 
 const isDark = useDark()
 const imageDetailModel = ref(false)
 const loadingImages = ref(false)
 const folded = ref(false)
 const isReady = ref(false)
-const loaded = ref(0)
 const currPage = ref(1)
 const totalImages = ref(0)
 const totalPages = ref(0)
@@ -131,15 +135,25 @@ const imageDetails = reactive({
     uri: '',
     width: ''
   },
+  total: 0,
   current: 0,
 })
 const images = ref([])
+const fwMeta = reactive({
+  title: DEFAULT_TITLE,
+  intro: DEFAULT_INTRO,
+  noImageTip: DEFAULT_NO_IMAGE_TIP
+})
 
 function jumpTo(url) {
   const a = document.createElement('a')
   a.href = url
   a.target = '_blank'
   a.click()
+}
+
+function toManager() {
+  jumpTo(`${import.meta.env.VITE_IMG_FETCH_BASE}/manager`)
 }
 
 async function openDetail(index) {
@@ -171,6 +185,10 @@ async function loadMore() {
     currPage.value += 1
     totalImages.value = imagesResult.total
     totalPages.value = imagesResult.pages
+
+    fwMeta.title = imagesResult.site_title || DEFAULT_TITLE
+    fwMeta.intro = imagesResult.site_description || DEFAULT_INTRO
+    fwMeta.noImageTip = imagesResult.no_image_tip || DEFAULT_NO_IMAGE_TIP
 
     images.value.push(...imagesResult.images)
     imagesResult.images.forEach(img => {

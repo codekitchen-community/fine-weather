@@ -6,19 +6,13 @@ on:
   pull_request:
     branches: [ main ]
 
-permissions:
-    contents: read
-    pages: write
-    id-token: write
-
 jobs:
-  deploy:
-    environment:
-      name: github-pages
-    name: Documentation
+  build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Move manager out
         run: mv ./manager/* ./
       - name: Setup PDM
@@ -30,6 +24,18 @@ jobs:
         run: pdm install -Gdoc
       - name: Build documentation
         run: pdm run mkdocs build --clean
+
+  deploy:
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+    steps:
+      - uses: actions/checkout@v4
       - name: Upload to GitHub Pages
         uses: actions/upload-pages-artifact@v3
         with:

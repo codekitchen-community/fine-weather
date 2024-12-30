@@ -21,9 +21,19 @@ export default defineConfig(({ mode }) => {
     },
     server: {
       proxy: {
-        '^/manager': {
-          target: 'http://localhost:20099',
-          changeOrigin: true
+        '^/api': {
+          target: 'http://localhost:20090',
+          rewrite: (path) => path.replace(/^\/api/, ''),
+          changeOrigin: true,
+          followRedirects: true,
+          bypass: (req, res) => {
+            if (req.url === '/api/manager') {
+              res.writeHead(302, {
+                Location: 'http://localhost:20090'
+              })
+              res.end()
+            }
+          },
         }
       }
     },
