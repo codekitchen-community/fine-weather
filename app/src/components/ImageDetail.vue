@@ -26,13 +26,22 @@
       </div>
 
       <div class="h-100% w-100%">
-        <Suspense>
+        <Suspense :key="imgSrc">
           <template #default>
             <ImageAsync :src="imgSrc" class="w-100% h-100% block object-contain" />
           </template>
           <template #fallback>
-            <canvas class="w-100% h-100% block object-contain" ref="skeletonRef" width="32"
-              height="32"></canvas>
+            <div class="reactive h-100% w-100%">
+              <canvas class="w-100% h-100% block object-contain" ref="skeletonRef" width="32"
+                height="32">
+              </canvas>
+              <div class='
+                h-.75 w-6.2rem overflow-hidden absolute top-50% left-50%
+                translate-x--50% translate-y--50%
+              '>
+                <div class='progress w-full h-full bg-[rgba(255,255,255,0.3)] left-right'></div>
+              </div>
+            </div>
           </template>
         </Suspense>
       </div>
@@ -72,15 +81,14 @@ import ImageAsync from './ImageAsync.vue'
 
 const props = defineProps({
   imgMeta: {
-    src: String,
+    uri: String,
     title: String,
     position: String,
     time: String,
     description: String,
-    blurHash: {
-      encoded: String,
-      size: Array,
-    },
+    blurhash: String,
+    height: Number,
+    width: Number
   },
   current: Number,
   total: Number,
@@ -98,10 +106,13 @@ const imgSrc = computed(
 
 watchEffect(() => {
   if (props.modelValue && skeletonRef.value) {
-    const originSize = props.imgMeta.blurHash.size
-    skeletonRef.value.height = Math.floor((originSize[1] / originSize[0]) * 32)
+    if (props.imgMeta.width >= props.imgMeta.height) {
+      skeletonRef.value.height = Math.floor((props.imgMeta.height / props.imgMeta.width) * 32)
+    } else {
+      skeletonRef.value.width = Math.floor((props.imgMeta.width / props.imgMeta.height) * 32)
+    }
 
-    const pixels = decode(props.imgMeta.blurHash.encoded, 32, 32)
+    const pixels = decode(props.imgMeta.blurhash, 32, 32)
     const ctx = skeletonRef.value.getContext('2d')
     const imageData = ctx.createImageData(32, 32)
     imageData.data.set(pixels)
@@ -133,5 +144,31 @@ const folded = ref(false)
 
 .btn i {
   --at-apply: block text-xl;
+}
+
+.progress {
+  animation: progress .7s infinite linear;
+}
+
+.left-right {
+  transform-origin: 0% 50%;
+}
+
+@keyframes progress {
+  0% {
+    transform: translateX(0) scaleX(0);
+  }
+
+  37% {
+    transform: translateX(0) scaleX(0.62);
+  }
+
+  62% {
+    transform: translateX(75%) scaleX(0.37);
+  }
+
+  100% {
+    transform: translateX(100%) scaleX(0.15);
+  }
 }
 </style>
