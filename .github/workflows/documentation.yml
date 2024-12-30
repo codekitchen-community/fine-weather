@@ -24,6 +24,11 @@ jobs:
         run: pdm install -Gdoc
       - name: Build documentation
         run: pdm run mkdocs build --clean
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: documentation
+          path: site
 
   deploy:
     needs: build
@@ -35,7 +40,11 @@ jobs:
     environment:
       name: github-pages
     steps:
-      - uses: actions/checkout@v4
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: documentation
+          path: site
       - name: Upload to GitHub Pages
         uses: actions/upload-pages-artifact@v3
         with:
