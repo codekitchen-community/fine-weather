@@ -105,7 +105,7 @@
 import {
   onMounted, reactive, ref, watchEffect,
 } from 'vue'
-import { useDark, useEventListener } from '@vueuse/core'
+import { useDark, useEventListener, useTitle } from '@vueuse/core'
 import ImageCard from '@/components/ImageCard.vue'
 import ImageDetail from '@/components/ImageDetail.vue'
 
@@ -140,9 +140,9 @@ const imageDetails = reactive({
 })
 const images = ref([])
 const fwMeta = reactive({
-  title: DEFAULT_TITLE,
-  intro: DEFAULT_INTRO,
-  noImageTip: DEFAULT_NO_IMAGE_TIP
+  title: '',
+  intro: '',
+  noImageTip: ''
 })
 
 function jumpTo(url) {
@@ -201,6 +201,7 @@ async function loadMore() {
 }
 
 onMounted(() => {
+  useTitle(() => fwMeta.title)
   useEventListener(document, 'keydown', keypressListener)
   loadMore()
   isReady.value = true
